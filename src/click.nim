@@ -41,7 +41,7 @@ proc initialize(reinitialize: bool) =
 
 
 when isMainModule:
-  let configExists = existsFile("solo.yaml")
+  let configExists = existsFile("click.yaml")
   case paramCount():
     of 0:
        compile(configExists)
