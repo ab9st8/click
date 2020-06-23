@@ -1,6 +1,5 @@
 import os, strutils, yaml/serialization, streams, terminal
 
-## TODO ##
 const HELP_MSG = "  click - run Click with the default parameters.\n  click init - create a YAML configuration file. Run again to reinitialize it.\n"
 
 type
@@ -10,36 +9,33 @@ type
 
 ## Compile all C files found in the workspace.
 proc compile(fromFile: bool) =
-  # The customisable Click config.
   var config: ClickConfig = ClickConfig(
     compiler: "clang",
     outputDir: "./build/",
     auxOutput: true
   )
-  # Load the config if we were told there is one.
   if fromFile:
     var stream = newFileStream("./click.yaml")
     load(stream, config)
     stream.close()
-  var inputFiles: seq[string] = @[]                                            # Input files to compile.
-  var command = "echo You shouldn't see this! Something went wrong! && exit 1" # Command to run.
-  # Collect the input files (any file that ends with ".c").
+  var inputFiles: seq[string] = @[]
+  var command = "echo You shouldn't see this! Something went wrong! && exit 1"
   for file in walkDirRec("./"):
     if file[^2..^1] == ".c":
       inputFiles.add(file)
-  # If there are no files found, exit.
+
   if inputFiles.len() == 0:
     echo("Hmm... are you sure this is a C project? I couldn't find any C files and therefore wasn't able compile them. 😕")
     quit(1)
   
-  # Get the name of the output file.
-  var outputFile = config.outputDir / getCurrentDir().lastPathPart()
-  # Collect our data into one command.
+  
+  var outputFile = config.outputDir / getCurrentDir().lastPathPart() # Not division; path joining. Pretty sick.
+  
   command = config.compiler & " " & inputFiles.join(" ") & " -o " & outputFile
 
   if config.auxOutput:
     stdout.styledWrite(styleBright, "Found " & inputFiles.len().intToStr() & " C files!\nCompiling...\n", resetStyle, styleDim, "$ " & command & "\n")
-  # Execute the command.
+  
   discard execShellCmd(command)
   quit(0)
 
