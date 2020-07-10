@@ -7,6 +7,9 @@ type
     auxOutput: bool
     ignoreDirs, ignoreFiles: seq[string]
 
+
+## Handle the file-finding in a single directory
+## and pass on the task to subdirectories recursively.
 proc handleDirectory(dir: string, ignoreFiles: seq[string], ignoreDirs: seq[string]): seq[string] =
   result = @[]
   for kind, name in walkDir(dir):
