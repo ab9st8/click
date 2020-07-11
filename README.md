@@ -40,7 +40,9 @@ Before you grace us with your wonderful idea (which it definitely is, not kiddin
 
 **Type: [one of `bug`, `major bug`, `feature`, or `major feature`]**
 
-**OS: [one of `macOS`, `Windows`, `Linux` or `other`]**
+In case of bug also include:
+
+**OS: [one of `macOS`, `Windows`, `Linux`, `other`, or `any` in case of platform-agnostic bug]**
 
 This makes it easier to prioritize issues for the developers. Obviously major bugs will be looked at first, then bugs, then features and then major features. Please make sure fill in both the "type" field in the issue body as well as the appropriate label. Let's keep things organized, please.
 
