@@ -2,3 +2,4 @@ build/
 src/test.c
 src/test.yaml
 node_modules
+.DS_Store/
