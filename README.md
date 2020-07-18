@@ -2,7 +2,7 @@
 Click is a simple build tool for C. One command, `click`, and your code is compiled. You can even customize your build via a YAML file. Awesome, right? Ready to begin?
 
 ## Installation
-Click isn't yet available on any major package managers, but it's absolutely okay to build from source. To actually do that, make sure you have Nim and Nimble installed. Then:
+[Here]() you can download the latest release from GitHub (Linux not supported yet 😕), or you can build from source. To actually do that, make sure you have Nim and Nimble installed. Then:
 ```shell
 git clone https://github.com/aachh/click.git # clone the repository...
 cd click                                     # ...go to the project...
