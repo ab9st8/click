@@ -26,10 +26,9 @@ ignoreFiles: []          # List of paths to files to ignore in compilation.
 ## Initialize the Click configuartion (by creating a new
 ## `click.yaml` file) or reinitialize if there's one already.
 ## Simpler than you would think.
-proc initialize*(reinitialize: bool) =
+proc initialize*(reinitialize: bool, workspace: string) =
   if reinitialize:
-    removeFile("click.yaml")
+    removeFile(workspace / "click.yaml")
 
   stdout.styledWriteLine(fgCyan, if reinitialize: "Reinitialized `click.yaml`!" else: "Generated `click.yaml`!")
-  writeFile("click.yaml", YAML_CONTENT)
-    
+  writeFile(workspace / "click.yaml", YAML_CONTENT)

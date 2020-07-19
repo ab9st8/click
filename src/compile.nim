@@ -14,54 +14,54 @@ proc handleDirectory(dir: string, ignoreFiles: seq[string], ignoreDirs: seq[stri
   result = @[]
   for kind, name in walkDir(dir):
     if kind == pcFile:
-      if ignoreFiles.contains(name.expandFilename()): continue
+      if ignoreFiles.contains(name): continue
       elif name[^2..^1] == ".c": result.add(name)
     elif kind == pcDir:
-      if ignoreDirs.contains(name.expandFilename()): continue
+      if ignoreDirs.contains(name): continue
       else: result.add(handleDirectory(name, ignoreFiles, ignoreDirs))
 
 
 
 ## Compile all C files found in the workspace.
-proc compile*(fromFile: bool) =
+proc compile*(fromFile: bool, workspace: string) =
   var config: ClickConfig = ClickConfig(
     compiler: "clang",
-    outputDir: "./build/",
+    outputDir: "build/",
     auxOutput: true,
     ignoreDirs: @[".vscode"],
     ignoreFiles: @[]
   )
   if fromFile:
-    var stream = newFileStream("./click.yaml")
+    var stream = newFileStream(workspace / "click.yaml")
     load(stream, config)
     stream.close()
-
+  
   var ignoreDirs: seq[string] = @[]
   var ignoreFiles: seq[string] = @[]
   
   # Normalize directory names
   for dir in config.ignoreDirs:
-    if not existsDir("./" / dir): continue
-    ignoreDirs.add(dir.expandFilename())
+    if not existsDir(workspace / dir): continue
+    ignoreDirs.add(workspace / dir)
   config.ignoreDirs = ignoreDirs
 
   # Normalize filenames
   for file in config.ignoreFiles:
-    if not existsFile("./" / file): continue
-    ignoreFiles.add(file.expandFilename())
+    if not existsFile(workspace / file): continue
+    ignoreFiles.add(workspace / file)
   config.ignoreFiles = ignoreFiles
 
 
   var inputFiles: seq[string] = @[]
   var command = "echo You shouldn't see this! Something went wrong!\nStart an issue (https://github.com/aachh/click/issues) if you're seeing this. && exit 1"
 
-  inputFiles = handleDirectory("./", config.ignoreFiles, config.ignoreDirs)
+  inputFiles = handleDirectory(workspace, config.ignoreFiles, config.ignoreDirs)
 
   if inputFiles.len() == 0:
     echo("Hmm… are you sure this is a C project? I couldn't find any C files and therefore wasn't able compile them. 😕")
     quit(1)
   
-  let outputFile = config.outputDir / getCurrentDir().lastPathPart() # Not division; path joining. Pretty sick.
+  let outputFile = workspace / (config.outputDir / getCurrentDir().lastPathPart())
   
   command = config.compiler & " " & inputFiles.join(" ") & " -o " & outputFile
 
