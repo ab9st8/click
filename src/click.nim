@@ -3,6 +3,8 @@ import compile, initialize
 
 const HELP_MSG = "  click      - run Click with the default parameters.\n  click init - create a YAML configuration file. Run again to reinitialize it.\n"
 
+## Recursively walk down, looking for a
+## `click.yaml` file.
 proc checkForWorkspace(dir: string): string =
   if splitPath(dir).head == "/":
     result = "./".expandFilename()
@@ -13,8 +15,8 @@ proc checkForWorkspace(dir: string): string =
 
 
 when isMainModule:
-  let configExists = existsFile("click.yaml")
   let workspace = checkForWorkspace("./")
+  let configExists = existsFile(workspace / "click.yaml")
 
   if paramCount() == 0:
     compile(configExists, workspace)
