@@ -15,7 +15,8 @@ To generate a Click configuration file, run:
 ```shell
 click init
 ```
-This will create a `click.yaml` file with the following customisable fields:
+(If you run just `click`, you will be prompted about creating this file nevertheless.) The resulting YAML file will have the following customisable fields:
+* `name`—the name of your project. Your binary will be named this. `bin` by default,
 * `compiler`—what C compiler Click should use. `clang` by default,
 * `outputDir`—to which directory Click should output your executable. `./build/` by default,
 * `auxOutput`—whether Click should output cool info like the number of C files it found and what command it's running. Set to `false` to disable that kind of output. Sometimes silence is golden. `true` by default,
