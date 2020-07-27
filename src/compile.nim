@@ -77,7 +77,7 @@ proc compile*(fromFile: bool, workspace: string) =
     stdout.styledWrite(styleBright, "No C files found. Discarding.", resetStyle, "\n")
     quit(1)
   
-  let outputFile = workspace / config.name
+  let outputFile = workspace / config.outputDir / config.name
   
   command = config.compiler & " " & inputFiles.join(" ") & " -o " & outputFile
 
