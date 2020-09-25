@@ -2,7 +2,7 @@ Hey! I'm very excited with the fact that you want to work on Click. Let's make t
 
 Here is some info you need to know before you contribute:
 
-## For code contributors
+## For code contributors:
 If you're committing code in the context of an existing issue, make sure to reference it. Please write readable code (it's not that hard!). A comment on comments (pun intended 😛): when writing a proc, summarize what it does before its definition with a comment block **beginning with two hashes,** like this:
 ```nim
 ## Sum two numbers. When both of the parameters
