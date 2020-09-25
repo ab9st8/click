@@ -7,7 +7,7 @@ type
   ClickConfig = object
     name, compiler, outputDir: string
     auxOutput: bool
-    ignoreDirs, ignoreFiles: seq[string]
+    ignoreDirs, ignoreFiles, flags: seq[string]
 
 
 ## Handle the file-finding in a single directory
@@ -31,7 +31,8 @@ proc compile*(fromFile: bool, workspace: string) =
     outputDir: "build/",
     auxOutput: true,
     ignoreDirs: @[".vscode"],
-    ignoreFiles: @[]
+    ignoreFiles: @[],
+    flags: @["-Wall"]
   )
   # Load the YAML configuration. If there isn't one, create it.
   if fromFile:
@@ -55,12 +56,13 @@ proc compile*(fromFile: bool, workspace: string) =
   var ignoreDirs: seq[string] = @[]
   var ignoreFiles: seq[string] = @[]
   
+  # Not sure if both of these are really necessary but it doesn't work without this.
+
   # Normalize directory names
   for dir in config.ignoreDirs:
     if not existsDir(workspace / dir): continue
     ignoreDirs.add(workspace / dir)
   config.ignoreDirs = ignoreDirs
-
   # Normalize filenames
   for file in config.ignoreFiles:
     if not existsFile(workspace / file): continue
@@ -79,7 +81,7 @@ proc compile*(fromFile: bool, workspace: string) =
   
   let outputFile = workspace / config.outputDir / config.name
   
-  command = config.compiler & " " & inputFiles.join(" ") & " -o " & outputFile
+  command = config.compiler & " " & config.flags.join(" ") & " " & inputFiles.join(" ") & " -o " & outputFile
 
   if config.auxOutput:
     stdout.styledWrite(styleBright, "Found " & intToStr(inputFiles.len()) & " C files!\nCompiling...\n", resetStyle, styleDim, "$ " & command, resetStyle, "\n\n")
