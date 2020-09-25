@@ -13,7 +13,7 @@ const YAML_CONTENT* = """--- # CLICK CONFIGURATION # ---
 # again.                          #
 # This file is required for Click #
 # to run.                         #
-##################################/
+###################################
 
 name       : "bin"       # The name of the project, what to name the binary. "bin" by default.
 compiler   : "clang"     # What compiler to use. "clang" by default.

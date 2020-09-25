@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.0"
+version       = "0.2.0"
 author        = "aachh"
 description   = "A simple one-command configurable C build tool."
 license       = "MIT"

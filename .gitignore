@@ -1,5 +1,6 @@
 build/
 src/test.c
 src/test.yaml
+test.yaml
 node_modules
 .DS_Store
