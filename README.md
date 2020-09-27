@@ -21,7 +21,8 @@ click init
 * `outputDir`—to which directory Click should output your executable. `./build/` by default,
 * `auxOutput`—whether Click should output cool info like the number of C files it found and what command it's running. Set to `false` to disable that kind of output. Sometimes silence is golden. `true` by default,
 * `ignoreDirs`—what entire directories Click should omit in finding files to compile. `[".vscode"]` by default,
-* `ignoreFiles`—what files Click should omit in finding files to compile. Empty by default.
+* `ignoreFiles`—what files Click should omit in finding files to compile. Empty by default,
+* `flags`—what flags Click should pass to the compiler. `["-Wall"]` by default.
 
 If you want to revert to the defaults, just run `click init` again. It's that simple.
 
