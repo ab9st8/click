@@ -2,13 +2,13 @@
 Click is a simple build tool for C. One command, `click`, and your code is compiled. The build command is customisable via a simple TOML configuration file.
 
 ## Installation
-Releases are [under here.](https://github.com/aachh/click/releases) Preferably you can build from source. Make sure you have Nimble (and generally the Nim toolchain) installed. Then
+Releases are [under here.](https://github.com/c1m5j/click/releases) Preferably you can build from source. Make sure you have Nimble (and generally the Nim toolchain) installed. Then
 ```sh
-git clone https://github.com/aachh/click.git # clone the repository...
+git clone https://github.com/c1m5j/click.git # clone the repository...
 cd click                                     # ...go to the project...
 nimble build                                 # ...and build it!
 ```
-Click will appear in the `build` directory. If it doesn't and something goes wrong, please [file an issue.](https://github.com/aachh/click/issues/new) Then just place it on your `$PATH`, wherever that may be.
+Click will appear in the `build` directory. If it doesn't and something goes wrong, please [file an issue.](https://github.com/c1m5j/click/issues/new) Then just place it on your `$PATH`, wherever that may be.
 
 ## Customisation
 To generate a Click configuration file, run:

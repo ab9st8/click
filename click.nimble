@@ -1,7 +1,7 @@
 # Package
 
 version       = "0.2.0"
-author        = "aachh"
+author        = "c1m5j"
 description   = "A simple one-command configurable C build tool."
 license       = "MIT"
 srcDir        = "src"
