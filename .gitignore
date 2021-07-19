@@ -1,6 +1,7 @@
+.vscode/
 build/
 src/test.c
 src/test.yaml
-test.yaml
+click.toml
 node_modules
 .DS_Store

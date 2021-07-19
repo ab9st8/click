@@ -1,90 +1,78 @@
-import yaml/serialization, streams, os, terminal, strutils
+import toml_serialization, os, strutils, utils, initialize, sugar
 
-import initialize
-
-## This type represents the Click configuration.
+## Represents the Click configuration, corresponds to the TOML fields.
 type
-  ClickConfig = object
-    name, compiler, outputDir: string
-    auxOutput: bool
-    ignoreDirs, ignoreFiles, flags: seq[string]
+    ClickConfig* = object
+        name, compiler, outputDir: string
+        auxOutput: bool
+        ignoreDirs, ignoreFiles, flags, libs, includes, linkDirs: seq[string]
 
 
-## Handle the file-finding in a single directory
-## and pass it on to subdirectories recursively.
+## Handles the file-finding in a single directory
+## and passes it on to subdirectories recursively.
+## Returns all the .c files found in workspace.
 proc handleDirectory(dir: string, ignoreFiles: seq[string], ignoreDirs: seq[string]): seq[string] =
-  result = @[]
-  for kind, name in walkDir(dir):
-    if kind == pcFile:
-      if ignoreFiles.contains(name): continue
-      elif name[^2..^1] == ".c": result.add(name)
-    elif kind == pcDir:
-      if ignoreDirs.contains(name): continue
-      else: result.add(handleDirectory(name, ignoreFiles, ignoreDirs))
+    for kind, name in walkDir(dir):
+        if kind == pcFile:
+            if ignoreFiles.contains(name): continue
+            elif name.endsWith(".c"): result.add(name.expandFilename())
+        elif kind == pcDir:
+            if ignoreDirs.contains(name): continue
+            else: result.add(handleDirectory(name, ignoreFiles, ignoreDirs))
 
-
-## Compile all C files found in the workspace.
+## Compiles all C files found in the workspace.
 proc compile*(fromFile: bool, workspace: string) =
-  var config: ClickConfig = ClickConfig(
-    name: "bin",
-    compiler: "clang",
-    outputDir: "build/",
-    auxOutput: true,
-    ignoreDirs: @[".vscode"],
-    ignoreFiles: @[],
-    flags: @["-Wall"]
-  )
-  # Load the YAML configuration. If there isn't one, create it.
-  if fromFile:
-    var stream = newFileStream(workspace / "click.yaml")
-    load(stream, config)
-    stream.close()
-  else:
-    stdout.styledWrite("In order to Click this project, a `click.yaml` file needs to be created. Proceed? y/n ", styleDim, "[y]\n", resetStyle)
-    var result = ""
-    while true:
-      result = stdin.readLine()
-      if result == "y" or result == "" or result == "yes":
-        writeFile(workspace / "click.yaml", YAML_CONTENT)
-        stdout.styledWrite(fgCyan, "Generated a `click.yaml` file, Clicking!\n", resetStyle)
-        break
-      elif result == "n" or result == "no":
-        echo("Discarding.")
-        return
-      stdout.styledWrite(fgRed, "Please input either `y` or `n`.\n", resetStyle)
-  
-  var ignoreDirs: seq[string] = @[]
-  var ignoreFiles: seq[string] = @[]
-  
-  # Not sure if both of these are really necessary but it doesn't work without this.
+    var config: ClickConfig
 
-  # Normalize directory names
-  for dir in config.ignoreDirs:
-    if not existsDir(workspace / dir): continue
-    ignoreDirs.add(workspace / dir)
-  config.ignoreDirs = ignoreDirs
-  # Normalize filenames
-  for file in config.ignoreFiles:
-    if not existsFile(workspace / file): continue
-    ignoreFiles.add(workspace / file)
-  config.ignoreFiles = ignoreFiles
+    # Load the TOML configuration. If there isn't one, create it.
+    if not fromFile:
+        writePrompt("In order to Click this project, a `click.toml` file needs to be created. Proceed? [Y/n]", true)
+        while true:
+            let result = stdin.readLine()
+            if result == "y" or result == "" or result == "yes":
+                initialize(false, workspace)
+                break
+            elif result == "n" or result == "no":
+                echo("Discarding.")
+                return
+            writeError("Please input either `y` or `n`.", true)
 
+    var file = readFile(workspace / "click.toml")
+    config = Toml.decode(file, ClickConfig)
 
-  var inputFiles: seq[string] = @[]
-  var command = "echo You shouldn't see this, something went wrong!\nStart an issue (https://github.com/aachh/click/issues) if you're seeing this. && exit 1"
+    normalise(ignoreDirs, dirExists)
+    normalise(ignoreFiles, fileExists)
+    normalise(linkDirs, dirExists)
+    normalise(includes, dirExists)
 
-  inputFiles = handleDirectory(workspace, config.ignoreFiles, config.ignoreDirs)
+    var inputFiles = handleDirectory(workspace, config.ignoreFiles, config.ignoreDirs)
 
-  if inputFiles.len() == 0:
-    stdout.styledWrite(styleBright, "No C files found. Discarding.", resetStyle, "\n")
-    quit(1)
-  
-  let outputFile = workspace / config.outputDir / config.name
-  
-  command = config.compiler & " " & config.flags.join(" ") & " " & inputFiles.join(" ") & " -o " & outputFile
+    config.libs.forEach((el) => "-l" & el)
+    config.includes.forEach((el) => "-I" & el)
+    config.linkDirs.forEach((el) => "-L" & el)
 
-  if config.auxOutput:
-    stdout.styledWrite(styleBright, "Found " & intToStr(inputFiles.len()) & " C files!\nCompiling...\n", resetStyle, styleDim, "$ " & command, resetStyle, "\n\n")
-  
-  let exitCode = execShellCmd(command)
-  quit(exitCode)
+    if inputFiles.len() == 0:
+        writePrompt("No C files found. Discarding.", true)
+        quit(1)
+
+    let outputFile = workspace / config.outputDir / config.name
+
+    let command = config.compiler &
+        " " & 
+        config.flags.join(" ") &
+        " " &
+        inputFiles.join(" ") &
+        " " &
+        config.libs.join(" ") &
+        (if config.libs != @[]: " " else: "") &
+        config.includes.join(" ") &
+        (if config.includes != @[]: " " else: "") &
+        config.linkDirs.join(" ") &
+        (if config.linkDirs != @[]: " " else: "") &
+        "-o " & outputFile
+
+    if config.auxOutput:
+        writePrompt("Found " & intToStr(inputFiles.len()) & " C files!\nCompiling...", true)
+        writeAux("$ " & command & "\n", true) # double newline
+
+    quit(execShellCmd(command))
