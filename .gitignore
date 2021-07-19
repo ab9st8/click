@@ -4,4 +4,4 @@ src/test.c
 src/test.yaml
 click.toml
 node_modules
-.DS_Store
+src/.DS_Store

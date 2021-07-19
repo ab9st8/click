@@ -16,8 +16,9 @@ const TOML_CONTENT*: string = """
 
 name        = "bin"        # The name of the project, the name of the binary. "bin" by default.
 compiler    = "gcc"        # What compiler to use. "gcc" by default.
-outputDir   = "./build"    # To which directory to output the executable. `./build` by default.
-auxOutput   = true         # Whether Click should output auxiliary info: "Found <n> C files!" and "Runnning <command>..."
+extensions  = [".c"]       # List of file extensions Click should look for. [".c"] by default.
+outputDir   = "build"    # To which directory to output the executable. `build` by default.
+auxOutput   = true         # Whether Click should output auxiliary info: "Found <n> files!" and "Runnning <command>..."
 ignoreDirs  = [".vscode"]  # List of directories to ignore in compilation. [".vscode"] by default.
 ignoreFiles = []           # List of paths to files to ignore in compilation. Empty by default.
 flags       = ["-Wall"]    # List of flags with which to compile. ["-Wall"] by default.
@@ -32,4 +33,7 @@ linkDirs    = []           # List of link directories. Empty by default.
 ## Simpler than you would think.
 proc initialize*(reinitialize: bool, workspace: string) =
     writeFile(workspace / "click.toml", TOML_CONTENT)
-    writeSuccess(if reinitialize: "Reinitialized `click.toml`!" else: "Generated `click.toml`!", true)
+    writeSuccess(
+      if reinitialize: "Reinitialized `click.toml`!" 
+      else: "Generated `click.toml`!",
+    true)

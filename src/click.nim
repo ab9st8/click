@@ -6,11 +6,11 @@ const HELP_MSG = "  click      - run Click with the default parameters.\n  click
 ## click.toml file.
 proc checkForWorkspace(dir: string): string =
   if splitPath(dir).head == "/":
-    result = "./".expandFilename()
+    return "./".expandFilename()
   elif fileExists(expandFilename(dir) / "click.toml"):
-    result = dir
+    return dir
   else: # recur
-    result = checkForWorkspace(expandFilename(dir).parentDir())
+    return checkForWorkspace(expandFilename(dir).parentDir())
 
 
 when isMainModule:

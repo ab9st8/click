@@ -1,5 +1,5 @@
 # \*click* — done.
-Click is a simple build tool for C. One command, `click`, and your code is compiled. The build command is customisable via a simple TOML configuration file.
+Click is a simple build tool for C and C++. One command, `click`, and your code is compiled. The build command is customisable via a simple TOML configuration file.
 
 ## Installation
 Releases are [under here.](https://github.com/c1m5j/click/releases) Preferably you can build from source. Make sure you have Nimble (and generally the Nim toolchain) installed. Then
@@ -17,17 +17,18 @@ click init
 ```
 If you run Click without a configuration file you will be prompted about creating it nonetheless. The resulting TOML file will have the following customisable fields:
 * `name` — the name of your project. Your binary will be named this. `bin` by default,
-* `compiler` — what C compiler Click should use. `gcc` by default,
-* `outputDir` — to which directory Click should output your executable. `./build` by default,
+* `compiler` — what compiler Click should use. `gcc` by default,
+* `extensions` — what file extensions Click should look for. Please make sure that the extensions **have** a leading dot. `[".c"]` by default,
+* `outputDir` — to which directory Click should output your executable. `build` by default,
 * `auxOutput` — whether Click should output auxiliary info like the number of C files it found and what command it's running. Set to `false` to disable that kind of output. `true` by default,
-* `ignoreDirs` — what entire directories Click should omit in finding files to compile. Please make sure directory names **do not** end with a slash. `[".vscode"]` by default,
+* `ignoreDirs` — what entire directories Click should omit in finding files to compile. `[".vscode"]` by default,
 * `ignoreFiles` — what specific files Click should omit in finding files to compile. Empty by default,
 * `flags` — what flags Click should pass to the compiler. `["-Wall"]` by default,
 * `libs` — what static libraries Click should link during compilation with `-l<library>`. Empty by default,
 * `includes` — what additional include directories Click should take into consideration during compilation with `-I<directory>`. Empty by default,
 * `linkDirs` — what additional directories Click should link during compilation with `-L<library>`. Empty by default.
 
-All paths **must** be relative to the workspace, e.g. with a project structure like this:
+Please make sure that all directory names **do not** end with a slash. All paths **must** be relative to the workspace, e.g. with a project structure like this:
 ```
 .
 ├── README.md

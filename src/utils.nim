@@ -1,4 +1,4 @@
-import terminal, sugar
+import terminal, sugar, strutils
 
 using
     s: string
@@ -27,6 +27,13 @@ proc writeAux*(s, newline) =
 ## A for-each proc.
 proc forEach*[T](arr: var openArray[T], f: (T) -> T) =
     for el in arr.mitems(): el = f(el)
+
+## Checks if a filename ends with a legal
+## extension.
+proc checksExtension*(filename: string, extensions: seq[string]): bool =
+    for el in extensions:
+        if filename.endsWith(el): return true
+    return false
 
 ## Normalises configuration fields by
 ## checking for existence of directories and files
