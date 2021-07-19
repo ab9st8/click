@@ -1,22 +1,22 @@
-import os, terminal
-import compile, initialize
+import os, compile, initialize, utils
 
-const HELP_MSG = "  click      - run Click with the default parameters.\n  click init - create a YAML configuration file. Run again to reinitialize it.\n"
+const HELP_MSG = "  click      - run Click with the default parameters.\n  click init - create a TOML configuration file. Run again to reinitialize it.\n"
 
 ## Recursively walk down, looking for a
-## `click.yaml` file.
+## click.toml file.
 proc checkForWorkspace(dir: string): string =
   if splitPath(dir).head == "/":
     result = "./".expandFilename()
-  elif existsFile(expandFilename(dir) / "click.yaml"):
+  elif fileExists(expandFilename(dir) / "click.toml"):
     result = dir
   else: # recur
     result = checkForWorkspace(expandFilename(dir).parentDir())
 
 
 when isMainModule:
-  let workspace = checkForWorkspace("./")
-  let configExists = existsFile(workspace / "click.yaml")
+  let workspace = checkForWorkspace("./".expandFilename())
+  echo workspace
+  let configExists = fileExists(workspace / "click.toml")
 
   if paramCount() == 0:
     compile(configExists, workspace)
@@ -24,4 +24,5 @@ when isMainModule:
     if paramStr(1) == "init":
       initialize(configExists, workspace)
     else:
-      stdout.styledWrite(styleBright, styleUnderscore, "USAGE\n", resetStyle, HELP_MSG)
+      writePrompt("USAGE:", true)
+      echo(HELP_MSG)

@@ -9,8 +9,7 @@ bin           = @["click"]
 binDir        = "build"
 
 
-
 # Dependencies
 
 requires "nim >= 1.2.0"
-requires "yaml >= 0.13.1"
+requires "tomlserialization >= 0.2.0"
