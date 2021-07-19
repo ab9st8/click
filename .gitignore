@@ -1,3 +1,4 @@
+.vscode/
 build/
 src/test.c
 src/test.yaml
