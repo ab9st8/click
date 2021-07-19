@@ -15,7 +15,6 @@ proc checkForWorkspace(dir: string): string =
 
 when isMainModule:
   let workspace = checkForWorkspace("./".expandFilename())
-  echo workspace
   let configExists = fileExists(workspace / "click.toml")
 
   if paramCount() == 0:
